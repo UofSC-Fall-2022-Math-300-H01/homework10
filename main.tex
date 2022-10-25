@@ -1,0 +1,100 @@
+\documentclass[12pt]{amsart}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{ebproof}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem*{theorem*}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{caution}[theorem]{Caution}
+
+\begin{document}
+
+\title{Homework}
+
+\maketitle
+
+\begin{enumerate}
+	\item Translate the statement and proof of problem1 in Hw10.lean to 
+		a pen-and-paper statement and proof. 
+
+	\item Translate the statement and proof of problem2 in Hw10.lean to 
+		a pen-and-paper statement and proof. 
+
+	\item Translate the statement and proof of problem3 in Hw10.lean to 
+		a pen-and-paper statement and proof. 
+
+	\item Below is a theorem and proof. Translate the statement as a 
+		theorem problem4 and give a proof of it in Lean in Hw10.lean. 
+
+	\begin{theorem*}
+		Let $f : A \to B$ and $g : B \to C$ be 
+		functions. If $d : B \to A$ is a left inverse to $f$ and  
+		$e : C \to B$ is a right inverse to $g$, then $d \circ e$ is a left 
+		inverse to $g \circ f$. 
+	\end{theorem*}
+		
+	\begin{proof}
+		To be a left inverse we need to show that 
+		\begin{displaymath}
+			(d \circ e) \circ (g \circ f) = \operatorname{id}_A 
+		\end{displaymath}
+		for all $a$. Using the fact that composition is associative, 
+		we can rewrite the left-hand side as 
+		\begin{displaymath}
+			(d \circ e) \circ (g \circ f)  = d \circ (e \circ g) \circ f
+		\end{displaymath}
+		By definition of a left inverse, we know that $e \circ g = 
+		\operatorname{id}_B$ so we can rewrite again 
+		\begin{displaymath}
+			d \circ (e \circ g) \circ f = d \circ \operatorname{id}_B 
+			\circ f 
+		\end{displaymath}
+		Since composition with the identity function is the identity we 
+		have 
+		\begin{displaymath}
+			d \circ \operatorname{id}_B \circ f = d \circ f 
+		\end{displaymath}
+		Finally, as $d$ is a left inverse to $f$, we have 
+		\begin{displaymath}
+			d \circ f = \operatorname{id}_A
+		\end{displaymath}
+	\end{proof}
+		
+	\item Below is a theorem and proof. Translate the statement as a 
+		theorem labeled problem5 give a proof of it in Lean in Hw10.lean.
+
+	\begin{theorem*}
+		Being in bijection is symmetric. More precisely, if there exists a bijection 
+		$A \cong B$, then there also exists a bijection $B \cong A$. 
+	\end{theorem*}
+	
+	\begin{proof}
+		Let $f : A \to B$ be a bijection. Since $f$ is a bijection, it has 
+		an inverse $f^{-1} : B \to A$ which satisfies $f \circ f^{-1} = 
+		\operatorname{id}_B$ and $f^{-1} \circ f = \operatorname{id}_A$. We 
+		claim that $f^{-1}$ is also bijection. But the conditions we just 
+		listed imply that $f$ is the inverse of $f^{-1}$. Since $f^{-1}$ 
+		has an inverse, it is a bijection also. 
+	\end{proof}
+		
+\end{enumerate}
+\end{document}

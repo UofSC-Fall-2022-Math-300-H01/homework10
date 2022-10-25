@@ -1,4 +1,3 @@
-## Homework 9
+## Homework 10
 
-We look at sets in Lean 4. We include our own library with basic definitions,
-results, and notations for sets. 
+Translate proofs of theorems on functions between pen-and-paper and Lean. 

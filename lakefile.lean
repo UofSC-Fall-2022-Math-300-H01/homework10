@@ -1,15 +1,11 @@
 import Lake
 open Lake DSL
 
-package hw9 {
-  -- add package configuration options here
-}
+package hw10
 
-lean_lib Sets {
-  -- add library configuration options here
-}
+lean_lib Sets
 
-lean_lib Hw9 {
-  -- add library configuration options here
-}
+lean_lib Functions
+
+lean_lib Hw10 
 

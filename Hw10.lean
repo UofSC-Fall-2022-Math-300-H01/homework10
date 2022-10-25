@@ -1,8 +1,5 @@
-import Hw10
 import Sets.Basic
 import Functions.Basic
-import Lean.Elab.Print
-import Lean.Elab.Command
 
 open Set
 open Func
@@ -11,12 +8,12 @@ variable (α β γ : Type)
 variable (f : α → β) (g : β → γ) 
 variable (X Y : Set α) (U V : Set β)
 
-theorem desiredType1 (h : U ⊆ V) : f ⁻¹ U ⊆ f ⁻¹ V := by 
+theorem problem1 (h : U ⊆ V) : f ⁻¹ U ⊆ f ⁻¹ V := by 
   intro a h'
   have : f a ∈ V := h (f a) h'
   exact this 
 
-theorem desiredType2 (h₁ : α ≅ β) (h₂ : β ≅ γ) : α ≅ γ := by
+theorem problem2 (h₁ : α ≅ β) (h₂ : β ≅ γ) : α ≅ γ := by
   have ⟨f,u⟩ := h₁ 
   have ⟨g,v⟩ := h₂ 
   have l : Bijective (g ∘ f) := by 
@@ -25,7 +22,7 @@ theorem desiredType2 (h₁ : α ≅ β) (h₂ : β ≅ γ) : α ≅ γ := by
     exact ⟨inj,surj⟩ 
   exact ⟨g ∘ f,l⟩ 
 
-theorem desiredType3 (h : Surjective f) : HasRightInv f := by 
+theorem problem3 (h : Surjective f) : HasRightInv f := by 
   let g : β → α := by 
     intro b 
     have : ∃ a, f a = b := h b 
@@ -41,26 +38,7 @@ theorem desiredType3 (h : Surjective f) : HasRightInv f := by
       _       = b                           := by rw [v] 
   exact ⟨g,l⟩ 
 
-theorem desiredType4 (f : α → β) (g : β → γ) (d : LeftInverse f) (e : LeftInverse g) : 
-  (d.to_fun ∘ e.to_fun) ∘ (g ∘ f) = id := sorry 
+theorem problem4 : sorry := sorry 
 
-theorem desiredType5 (h : α ≅ β) : β ≅ α := sorry 
+theorem problem5 : sorry := sorry 
 
-open Lean
-open Lean.Meta
-open Lean.Elab.Command
-
-def n : String := "1"
-
-def problem : String := "problem"++n
-
-def desired : String := "desiredType"++n
-
-def collectAxiomsOf (constName : Name) : MetaM (List String) := do
-  let env ← getEnv
-  let (_, s) := ((CollectAxioms.collect constName).run env).run {}
-  let a := s.axioms.toList.map toString
-  return a
-
-#eval isDefEq (Expr.const desired []) (Expr.const problem [])
-#eval collectAxiomsOf problem

@@ -127,6 +127,51 @@ def Image (f : α → β) (X : Set α) : Set β := fun b => ∃ a, a ∈ X ∧ f
 def PreImage (f : α → β) (Y : Set β) : Set α := fun a => f a ∈ Y 
 infix:80 " ⁻¹ " => PreImage
 
+theorem image_sub (f : α → β) { X X' : Set α } (h : X ⊆ X')  : Image f X ⊆ Image f X' := by 
+  intro b h'
+  have ⟨a,h''⟩ := h' 
+  exact ⟨a,⟨h a h''.left,h''.right⟩⟩  
+
+theorem preimage_sub (f : α → β) { Y Y' : Set β } (h : Y ⊆ Y') : f⁻¹ Y ⊆ f⁻¹ Y' := by 
+  intro a h' 
+  exact h (f a) h' 
+
+theorem image_preimage_sub (f : α → β) (Y : Set β) : Image f (PreImage f Y) ⊆ Y := by 
+  intro b h 
+  have ⟨a,h'⟩ := h 
+  rw [←h'.right]
+  exact h'.left 
+
+theorem sub_preimage_image (f : α → β) (X : Set α) : X ⊆ PreImage f (Image f X) := by 
+  intro a h 
+  have : f a ∈ Image f X := ⟨a,⟨h,Eq.refl (f a) ⟩⟩ 
+  exact this
+
+theorem union_preimage (f : α → β) (Y Y' : Set β) : f⁻¹ (Y ∪ Y') = f⁻¹ Y ∪ f⁻¹ Y' := by rfl 
+
+theorem inter_preimage (f : α → β) (Y Y' : Set β) : f⁻¹ (Y ∩ Y') = f⁻¹ Y ∩ f⁻¹ Y' := by rfl 
+
+theorem union_image (f : α → β) (X X' : Set α) : Image f (X ∪ X') = Image f X ∪ Image f X' := by 
+  set_extensionality b 
+  · intro h 
+    have ⟨a,h'⟩ := h 
+    cases h'.left with 
+    | inl hl => exact Or.inl ⟨a,hl,h'.right⟩
+    | inr hr => exact Or.inr ⟨a,hr,h'.right⟩ 
+  · intro h 
+    cases h with 
+    | inl hl => 
+      have ⟨a,h'⟩ := hl 
+      exact ⟨a,⟨Or.inl h'.left,h'.right⟩⟩ 
+    | inr hr => 
+      have ⟨a,h'⟩ := hr 
+      exact ⟨a,⟨Or.inr h'.left,h'.right⟩⟩ 
+
+theorem inter_image (f : α → β) (X X' : Set α) : Image f (X ∩ X') ⊆ Image f X ∩ Image f X' := by 
+  intro b h 
+  have ⟨a,h'⟩ := h 
+  exact ⟨⟨a,⟨h'.left.left,h'.right⟩⟩,⟨a,⟨h'.left.right,h'.right⟩⟩⟩  
+
 def InBijection (γ δ : Type) : Prop := ∃ (f : γ → δ), Bijective f 
 infixl:60 " ≅ " => InBijection
 

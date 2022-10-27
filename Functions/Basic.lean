@@ -175,4 +175,8 @@ theorem inter_image (f : α → β) (X X' : Set α) : Image f (X ∩ X') ⊆ Ima
 def InBijection (γ δ : Type) : Prop := ∃ (f : γ → δ), Bijective f 
 infixl:60 " ≅ " => InBijection
 
+theorem bij_powerset (h : α ≅ β) : (α → γ) ≅ (β → γ) := by 
+  have ⟨f,h'⟩ := h 
+  sorry 
+
 end Func

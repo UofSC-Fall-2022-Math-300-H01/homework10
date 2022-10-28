@@ -106,6 +106,52 @@ theorem inj_has_left_inv (f : α → β) (l : Nonempty α) (h : Injective f) : H
     g (f a) = Classical.choose v  := w 
     _       = a                   := h (Classical.choose_spec v)
 
+theorem surj_has_right_inv (f : α → β) (h : Surjective f) : HasRightInv f := by 
+  let g : β → α := by 
+    intro b 
+    have : ∃ a, f a = b := h b 
+    have (a : α) := Classical.choose this 
+    exact a  
+  have (l : f ∘ g = id) := by 
+    apply funext 
+    intro b 
+    have u : g b = Classical.choose (h b) := by rfl 
+    have v : f (Classical.choose (h b)) = b := Classical.choose_spec (h b)
+    calc 
+      f (g b) = f (Classical.choose (h b))  := by rw [u] 
+      _       = b                           := by rw [v] 
+  exact ⟨g,l⟩ 
+
+def empty_bijection_inverse (f : Empty → β) (h : Bijective f) : Inverse f := by 
+  let g : β → Empty := fun b => by 
+    have (a : Empty) := Classical.choose (h.right b)
+    exact Empty.rec a 
+  have invl : g ∘ f = id := by 
+    apply funext 
+    exact fun a => Empty.rec a 
+  have invr : f ∘ g = id := funext (fun b => Empty.rec (Classical.choose (h.right b)))
+  exact ⟨g,invl,invr⟩ 
+
+noncomputable def inverse (f : α → β) (h : Bijective f) : Inverse f := 
+  have : Decidable (Nonempty α) := Classical.propDecidable (Nonempty α)
+  if u : Nonempty α then 
+    have g : LeftInverse f := Classical.choice (inj_has_left_inv f u h.left) 
+    have h : RightInverse f := Classical.choice (surj_has_right_inv f h.right)  
+    have : g.to_fun = h.to_fun := left_inv_right_inv_eq g h 
+    have invr' : f ∘ g.to_fun = id := by {rw [this]; exact h.invr}
+    ⟨g.to_fun,g.invl,invr'⟩  
+  else by  
+    let g : β → α := fun b => by  
+      have (p : Nonempty α) := ⟨Classical.choose (h.right b)⟩  
+      exact False.elim (u p)  
+    have invl : g ∘ f = id := by 
+      apply funext 
+      exact fun a => False.elim (u (Nonempty.intro a))
+    have invr : f ∘ g = id := funext <| fun b => by 
+      have (p : Nonempty α) := ⟨Classical.choose (h.right b)⟩  
+      exact False.elim (u p)
+    exact ⟨g,invl,invr⟩  
+
 theorem has_right_inv_surjective (f : α → β) (h : HasRightInv f) : Surjective f := by
   have ⟨g,l⟩ := h 
   intro (b:β)
@@ -175,8 +221,30 @@ theorem inter_image (f : α → β) (X X' : Set α) : Image f (X ∩ X') ⊆ Ima
 def InBijection (γ δ : Type) : Prop := ∃ (f : γ → δ), Bijective f 
 infixl:60 " ≅ " => InBijection
 
-theorem bij_powerset (h : α ≅ β) : (α → γ) ≅ (β → γ) := by 
-  have ⟨f,h'⟩ := h 
-  sorry 
+def circ (f : α → β) : (β → γ) → (α → γ) := fun v => v ∘ f 
 
+theorem identity (f : α → β) (u : β → γ) : circ f u = u ∘ f := by rfl 
+
+theorem comp_assoc (f : α → β) (g : β → γ) (h : γ → δ) : (h ∘ g) ∘ f = h ∘ g ∘ f := by rfl 
+
+theorem bij_comp (h : α ≅ β) : (α → γ) ≅ (β → γ) := by 
+  have ⟨f,h'⟩ := h 
+  have (g : Inverse f) := inverse f h'  
+  have invl : (circ f) ∘ (circ g.to_fun) = id := by 
+    apply funext 
+    intro (v: α → γ) 
+    dsimp 
+    rw [identity g.to_fun v, identity f (v ∘ g.to_fun)]
+    rw [comp_assoc f g.to_fun v, g.invl] 
+    rfl 
+  have invr : (circ g.to_fun) ∘ (circ f) = id := by 
+    apply funext 
+    intro (v: β → γ) 
+    dsimp 
+    rw [identity f v, identity g.to_fun (v ∘ f)]
+    rw [comp_assoc g.to_fun f v, g.invr] 
+    rfl 
+  have inj : Injective (circ g.to_fun) := has_left_inv_injective (circ g.to_fun) ⟨(circ f),invl⟩ 
+  have surj : Surjective (circ g.to_fun) := has_right_inv_surjective (circ g.to_fun) ⟨(circ f),invr⟩ 
+  exact ⟨circ g.to_fun,⟨inj,surj⟩⟩  
 end Func
